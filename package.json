@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-native-firebase/app": "^23.5.0",
     "expo": "~54.0.25",
+    "expo-notifications": "^0.32.14",
     "expo-status-bar": "~3.0.8",
     "firebase": "^12.6.0",
     "react": "19.1.0",
