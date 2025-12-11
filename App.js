@@ -7,6 +7,15 @@ import * as Notifications from 'expo-notifications';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { LinearGradient } from 'expo-linear-gradient';
 
+// Configure notification handler
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
 export default function App() {
   const [sensorMessage, setSensorMessage] = useState('');
   const [sensorType, setSensorType] = useState('');
@@ -15,6 +24,27 @@ export default function App() {
   const [lastDataUpdate, setLastDataUpdate] = useState(null);
   const [isAlertActive, setIsAlertActive] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  // Request notification permissions on mount
+  useEffect(() => {
+    const requestPermissions = async () => {
+      if (Platform.OS === 'web') return;
+
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus !== 'granted') {
+        console.log('Failed to get push notification permissions');
+      }
+    };
+
+    requestPermissions();
+  }, []);
 
   // Pulse animation for alerts
   useEffect(() => {
